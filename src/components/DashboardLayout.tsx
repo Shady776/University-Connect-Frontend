@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -16,12 +16,14 @@ import {
   X,
   LogOut,
   GraduationCap,
-  Bot,
   ClipboardCheck,
-  FileQuestion
+  FileQuestion,
+  ShieldAlert
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { NotificationBell } from "@/components/NotificationBell";
+import { BASE_URL } from "@/components/api/api";
 
 interface NavItem {
   icon: typeof Home;
@@ -36,48 +38,70 @@ interface DashboardLayoutProps {
 }
 
 const studentNav: NavItem[] = [
-  { icon: Home, label: "Dashboard", href: "/student" },
-  { icon: BookOpen, label: "All Courses", href: "/student/enrollment" },
-  { icon: BookOpen, label: "My Courses", href: "/student/courses" },
-  { icon: FileText, label: "Assignments", href: "/student/assignments" },
-  { icon: ClipboardCheck, label: "Take Test", href: "/student/test" },
-  { icon: Bot, label: "Use AI", href: "https://hexy.hextantlabs.com/" },
-  { icon: User, label: "Profile", href: "/student/profile" },
+  { icon: Home,          label: "Dashboard",   href: "/student" },
+  { icon: BookOpen,      label: "All Courses",  href: "/student/enrollment" },
+  { icon: FileText,      label: "Assignments",  href: "/student/assignments" },
+  { icon: ClipboardCheck,label: "Take Test",    href: "/student/test" },
+  { icon: ShieldAlert,   label: "Warnings",     href: "/student/warnings" },
+  // { icon: User,          label: "Profile",      href: "/student/profile" },
 ];
 
 const teacherNav: NavItem[] = [
-  { icon: Home, label: "Dashboard", href: "/teacher" },
-  { icon: BookOpen, label: "My Courses", href: "/teacher/courses" },
-  { icon: Upload, label: "Materials", href: "/teacher/materials" },
-  { icon: FileText, label: "Grading", href: "/teacher/grading" },
-  { icon: FileQuestion, label: "Tests", href: "/teacher/tests" },
+  { icon: Home,        label: "Dashboard",    href: "/teacher" },
+  { icon: BookOpen,    label: "My Courses",   href: "/teacher/courses" },
+  { icon: FileText,    label: "Assignments",  href: "/teacher/assignments" },
+  { icon: GraduationCap, label: "Enrollments", href: "/teacher/enrollments" },
+  { icon: FileText,    label: "Grading",      href: "/teacher/grading" },
+  { icon: FileQuestion,label: "Tests",        href: "/teacher/tests" },
 ];
 
 const adminNav: NavItem[] = [
-  { icon: Home, label: "Dashboard", href: "/admin" },
-  { icon: Users, label: "Users", href: "/admin/users" },
-  { icon: BookOpen, label: "Courses", href: "/admin/courses" },
-  { icon: BarChart3, label: "Analytics", href: "/admin/analytics" },
-  { icon: Bell, label: "Announcements", href: "/admin/announcements" },
-  { icon: Settings, label: "Settings", href: "/admin/settings" },
+  { icon: Home,     label: "Dashboard",    href: "/admin" },
+  { icon: Users,    label: "Users",        href: "/admin/users" },
+  { icon: BookOpen, label: "Courses",      href: "/admin/courses" },
+  { icon: BarChart3,label: "Analytics",    href: "/admin/analytics" },
+  { icon: Bell,     label: "Announcements",href: "/admin/announcements" },
+  { icon: Settings, label: "Settings",     href: "/admin/settings" },
 ];
 
-const navByRole = {
-  student: studentNav,
-  teacher: teacherNav,
-  admin: adminNav,
-};
+const navByRole   = { student: studentNav, teacher: teacherNav, admin: adminNav };
+const roleLabels  = { student: "Student Portal", teacher: "Teacher Portal", admin: "Admin Console" };
 
-const roleLabels = {
-  student: "Student Portal",
-  teacher: "Teacher Portal",
-  admin: "Admin Console",
-};
+// ── Hook: fetch unread warning count for the student sidebar badge ────────────
+function useUnreadWarnings(role: string) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (role !== "student") return;
+    const token = localStorage.getItem("access_token");
+    if (!token) return;
+
+    const fetch_ = async () => {
+      try {
+        // Adjust this endpoint to match wherever your warnings live
+        const res = await fetch(`${BASE_URL}/notifications/warnings/unread-count`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setCount(data.total_unread ?? 0);
+        }
+      } catch { /* silent */ }
+    };
+
+    fetch_();
+    const id = setInterval(fetch_, 30000);
+    return () => clearInterval(id);
+  }, [role]);
+
+  return count;
+}
 
 export function DashboardLayout({ children, role, userName = "User" }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const location = useLocation();
-  const navItems = navByRole[role];
+  const location                      = useLocation();
+  const navItems                      = navByRole[role];
+  const unreadWarnings                = useUnreadWarnings(role);
 
   return (
     <div className="h-screen bg-background flex overflow-hidden">
@@ -111,11 +135,13 @@ export function DashboardLayout({ children, role, userName = "User" }: Dashboard
           {/* Navigation */}
           <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
             {navItems.map((item) => {
-              const isActive = location.pathname === item.href;
+              const isActive   = location.pathname === item.href;
               const isExternal = item.href.startsWith("http");
+              const isWarnings = item.href === "/student/warnings";
+              const showBadge  = isWarnings && unreadWarnings > 0;
 
               const LinkComponent = isExternal ? "a" : Link;
-              const linkProps = isExternal
+              const linkProps     = isExternal
                 ? { href: item.href, target: "_blank", rel: "noopener noreferrer" }
                 : { to: item.href };
 
@@ -130,11 +156,21 @@ export function DashboardLayout({ children, role, userName = "User" }: Dashboard
                       : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground"
                   )}
                 >
-                  <item.icon className={cn("w-5 h-5", isActive && "text-primary")} />
+                  <item.icon className={cn("w-5 h-5 flex-shrink-0", isActive && "text-primary")} />
                   {item.label}
-                  {isActive && (
-                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary animate-pulse-glow" />
-                  )}
+
+                  <div className="ml-auto flex items-center gap-1.5">
+                    {/* Unread warnings badge */}
+                    {showBadge && (
+                      <span className="min-w-[18px] h-[18px] px-1 bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                        {unreadWarnings > 9 ? "9+" : unreadWarnings}
+                      </span>
+                    )}
+                    {/* Active indicator dot */}
+                    {isActive && (
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-glow" />
+                    )}
+                  </div>
                 </LinkComponent>
               );
             })}
@@ -175,11 +211,9 @@ export function DashboardLayout({ children, role, userName = "User" }: Dashboard
 
           <div className="flex-1" />
 
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full animate-pulse" />
-            </Button>
+          <div className="flex items-center gap-2">
+            {/* Only show NotificationBell for students */}
+            {role === "student" && <NotificationBell />}
           </div>
         </header>
 

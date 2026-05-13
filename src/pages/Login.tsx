@@ -1,43 +1,111 @@
 import { useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, Lock, Mail, ArrowRight, Users } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { GraduationCap, Lock, User, ArrowRight, Users, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
+import { BASE_URL } from "@/components/api/api";
+
+// Token decoder function
+const decodeToken = (token: string) => {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+            atob(base64)
+                .split('')
+                .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                .join('')
+        );
+        return JSON.parse(jsonPayload);
+    } catch (error) {
+        console.error('Error decoding token:', error);
+        return null;
+    }
+};
 
 const Login = () => {
     const navigate = useNavigate();
-    const location = useLocation();
-    const [role, setRole] = useState<"student" | "teacher" | "admin">(
-        (location.state as any)?.role || "student"
-    );
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [formData, setFormData] = useState({
+        username: "",
+        password: ""
+    });
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
-        // Mock login delay
-        setTimeout(() => {
-            if (email && password) {
-                // Mock successful login
-                localStorage.setItem("userRole", role);
-                localStorage.setItem("userName", "Test User"); // In a real app this would come from API
-                toast.success(`Welcome back, ${role}!`);
+        try {
+            const formBody = new URLSearchParams();
+            formBody.append('username', formData.username.toLowerCase());
+            formBody.append('password', formData.password);
 
-                // Redirect to original destination or dashboard
-                const from = location.state?.from?.pathname || `/${role}`;
-                navigate(from, { replace: true });
-            } else {
-                toast.error("Please enter both email and password");
+            const response = await fetch(`${BASE_URL}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formBody,
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.detail || 'Login failed');
             }
+
+            // Store tokens
+            localStorage.setItem('access_token', data.access_token);
+            localStorage.setItem('token_type', data.token_type);
+
+            // Decode token to get user role
+            const decoded = decodeToken(data.access_token);
+            console.log('Decoded token:', decoded);
+            
+            const userRole = decoded?.role || decoded?.user_role || decoded?.type || 
+                           decoded?.sub?.role || decoded?.user?.role;
+            
+            console.log('User role:', userRole);
+
+            // Store user role in localStorage
+            if (userRole) {
+                localStorage.setItem('userRole', userRole);
+            }
+
+            toast.success('Login successful! Redirecting...');
+            
+            // Redirect based on role using the correct routes from App.tsx
+            setTimeout(() => {
+                if (userRole === 'admin') {
+                    console.log('Redirecting to admin dashboard');
+                    navigate('/admin');
+                } else if (userRole === 'teacher') {
+                    console.log('Redirecting to teacher dashboard');
+                    navigate('/teacher');
+                } else if (userRole === 'student') {
+                    console.log('Redirecting to student dashboard');
+                    navigate('/student');
+                } else {
+                    // Default to student dashboard if role is not recognized
+                    console.log('Unknown role, redirecting to student dashboard');
+                    navigate('/student');
+                }
+            }, 1000);
+        } catch (err: any) {
+            toast.error(err.message);
+            console.error('Login error:', err);
+        } finally {
             setIsLoading(false);
-        }, 1000);
+        }
     };
 
     return (
@@ -53,66 +121,70 @@ const Login = () => {
                         <p className="text-muted-foreground">Sign in to your academic portal</p>
                     </div>
 
-                    <Tabs value={role} onValueChange={(v) => setRole(v as any)} className="w-full">
-                        <TabsList className="grid w-full grid-cols-3 mb-8">
-                            <TabsTrigger value="student">Student</TabsTrigger>
-                            <TabsTrigger value="teacher">Teacher</TabsTrigger>
-                            <TabsTrigger value="admin">Admin</TabsTrigger>
-                        </TabsList>
-
-                        <form onSubmit={handleLogin} className="space-y-6">
-                            <div className="space-y-2">
-                                <Label htmlFor="email">Email address</Label>
-                                <div className="relative">
-                                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                    <Input
-                                        id="email"
-                                        type="email"
-                                        placeholder="name@example.com"
-                                        className="pl-9"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        required
-                                    />
-                                </div>
+                    <form onSubmit={handleLogin} className="space-y-6">
+                        <div className="space-y-2">
+                            <Label htmlFor="username">Username</Label>
+                            <div className="relative">
+                                <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    id="username"
+                                    name="username"
+                                    type="text"
+                                    placeholder="Enter your username"
+                                    className="pl-9 bg-background"
+                                    value={formData.username}
+                                    onChange={handleChange}
+                                    required
+                                    disabled={isLoading}
+                                />
                             </div>
+                        </div>
 
-                            <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <Label htmlFor="password">Password</Label>
-                                    <Link
-                                        to="#"
-                                        className="text-sm font-medium text-primary hover:underline"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            toast.info("Forgot password feature coming soon!");
-                                        }}
-                                    >
-                                        Forgot password?
-                                    </Link>
-                                </div>
-                                <div className="relative">
-                                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                    <Input
-                                        id="password"
-                                        type="password"
-                                        className="pl-9"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        required
-                                    />
-                                </div>
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="password">Password</Label>
+                                <Link
+                                    to="#"
+                                    className="text-sm font-medium text-primary hover:underline"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        toast.info("Forgot password feature coming soon!");
+                                    }}
+                                >
+                                    Forgot password?
+                                </Link>
                             </div>
+                            <div className="relative">
+                                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    id="password"
+                                    name="password"
+                                    type={showPassword ? "text" : "password"}
+                                    className="pl-9 pr-9 bg-background"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
+                                    disabled={isLoading}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                                    disabled={isLoading}
+                                >
+                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                </button>
+                            </div>
+                        </div>
 
-                            <Button type="submit" className="w-full" disabled={isLoading}>
-                                {isLoading ? "Signing in..." : (
-                                    <>
-                                        Sign in <ArrowRight className="ml-2 h-4 w-4" />
-                                    </>
-                                )}
-                            </Button>
-                        </form>
-                    </Tabs>
+                        <Button type="submit" className="w-full" disabled={isLoading}>
+                            {isLoading ? "Signing in..." : (
+                                <>
+                                    Sign in <ArrowRight className="ml-2 h-4 w-4" />
+                                </>
+                            )}
+                        </Button>
+                    </form>
 
                     <div className="text-center text-sm">
                         <span className="text-muted-foreground">Don't have an account? </span>

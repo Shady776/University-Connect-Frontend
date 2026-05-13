@@ -14,19 +14,22 @@ import Signup from "./pages/Signup";
 import ProtectedRoute from "./components/ProtectedRoute";
 import StudentCourses from "./pages/StudentCourses";
 import StudentAssignments from "./pages/StudentAssignments";
-
+import StudentWarnings from "./pages/StudentWarnings";
 import StudentProfile from "./pages/StudentProfile";
 import StudentTest from "./pages/StudentTest";
 import StudentEnrollment from "./pages/StudentEnrollment";
 import TeacherCourses from "./pages/TeacherCourses";
 import TeacherMaterials from "./pages/TeacherMaterials";
 import TeacherGrading from "./pages/TeacherGrading";
+import TeacherAssignments from "./pages/TeacherAssignments";
+import TeacherEnrollments from "./pages/TeacherEnrollment";
 import TeacherTests from "./pages/TeacherTests";
 import AdminUsers from "./pages/AdminUsers";
 import AdminCourses from "./pages/AdminCourses";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import AdminAnnouncements from "./pages/AdminAnnouncements";
 import AdminSettings from "./pages/AdminSettings";
+
 
 const queryClient = new QueryClient();
 
@@ -53,6 +56,7 @@ const App = () => (
                   <Route path="/profile" element={<StudentProfile />} />
                   <Route path="/test" element={<StudentTest />} />
                   <Route path="/enrollment" element={<StudentEnrollment />} />
+                  <Route path="/warnings" element={<StudentWarnings />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </ProtectedRoute>
@@ -66,7 +70,9 @@ const App = () => (
                   <Route path="/" element={<TeacherDashboard />} />
                   <Route path="/courses" element={<TeacherCourses />} />
                   <Route path="/materials" element={<TeacherMaterials />} />
+                  <Route path="/enrollments" element={<TeacherEnrollments />} />
                   <Route path="/grading" element={<TeacherGrading />} />
+                  <Route path="/assignments" element={<TeacherAssignments />} />
                   <Route path="/tests" element={<TeacherTests />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
