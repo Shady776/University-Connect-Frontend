@@ -42,7 +42,7 @@ const studentNav: NavItem[] = [
   { icon: BookOpen,      label: "All Courses",  href: "/student/enrollment" },
   { icon: FileText,      label: "Assignments",  href: "/student/assignments" },
   { icon: ClipboardCheck,label: "Take Test",    href: "/student/test" },
-  { icon: ShieldAlert,   label: "Warnings",     href: "/student/warnings" },
+  // { icon: ShieldAlert,   label: "Warnings",     href: "/student/warnings" },
   // { icon: User,          label: "Profile",      href: "/student/profile" },
 ];
 

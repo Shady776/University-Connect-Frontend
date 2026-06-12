@@ -271,7 +271,7 @@ const TeacherDashboard = () => {
         {/* Welcome Section */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-display font-bold mb-2">Good morning, {teacherName}! 📚</h1>
+            <h1 className="text-3xl font-display font-bold mb-2">Welcome, {teacherName}</h1>
             <p className="text-muted-foreground">Here's an overview of your teaching activities.</p>
           </div>
           <Button variant="glow" size="lg" onClick={() => openModal('assignment')}>

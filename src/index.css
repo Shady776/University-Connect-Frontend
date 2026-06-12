@@ -135,6 +135,10 @@
     -webkit-text-fill-color: hsl(var(--foreground)) !important;
     caret-color: hsl(var(--foreground));
   }
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
 }
 
 @layer utilities {
@@ -236,4 +240,10 @@
   .stagger-3 { animation-delay: 0.3s; }
   .stagger-4 { animation-delay: 0.4s; }
   .stagger-5 { animation-delay: 0.5s; }
+}
+
+[data-close-button] {
+  left: auto !important;
+  right: -8px !important;
+  top: -8px !important;
 }
