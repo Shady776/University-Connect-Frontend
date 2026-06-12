@@ -93,7 +93,7 @@ const TeacherDashboard = () => {
     const token = localStorage.getItem('access_token');
     
     // Fetch dashboard stats (includes recent_submissions)
-    const dashboardRes = await fetch(`${BASE_URL}/teacher/dashboard/`, {
+    const dashboardRes = await fetch(`${BASE_URL}/teacher/dashboard`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     
