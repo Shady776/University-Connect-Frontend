@@ -11,8 +11,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { BASE_URL } from "@/components/api/api";
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = BASE_URL;
 
 const TeacherGrading = () => {
     const [courses, setCourses] = useState([]);
