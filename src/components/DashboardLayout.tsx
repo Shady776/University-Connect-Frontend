@@ -136,7 +136,7 @@ export function DashboardLayout({ children, role, userName = "User" }: Dashboard
           <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
             {navItems.map((item) => {
               const isActive   = location.pathname === item.href;
-              const isExternal = item.href.startsWith("http");
+              const isExternal = item.href.startsWith("https");
               const isWarnings = item.href === "/student/warnings";
               const showBadge  = isWarnings && unreadWarnings > 0;
 
