@@ -100,6 +100,7 @@ const TeacherDashboard = () => {
     if (!dashboardRes.ok) throw new Error('Failed to fetch dashboard data');
     
     const data = await dashboardRes.json();
+    console.log("Dashboard data:", data);
     setDashboardData(data);
     
     // Fetch courses list with counts already included from assignments endpoint
@@ -286,7 +287,6 @@ const TeacherDashboard = () => {
             title="Total Students"
             value={stats.total_students}
             icon={Users}
-            trend={{ value: 8, isPositive: true }}
             delay={0.1}
             variant="glow"
           />
@@ -306,7 +306,6 @@ const TeacherDashboard = () => {
             title="Active Assignments"
             value={stats.active_assignments}
             icon={TrendingUp}
-            trend={{ value: 5, isPositive: true }}
             delay={0.4}
           />
         </div>
