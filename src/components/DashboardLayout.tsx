@@ -24,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/NotificationBell";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { BASE_URL } from "@/components/api/api";
 
 interface NavItem {
@@ -214,6 +215,7 @@ export function DashboardLayout({ children, role, userName = "User" }: Dashboard
           <div className="flex-1" />
 
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             {/* Only show NotificationBell for students */}
             {role === "student" && <NotificationBell />}
           </div>

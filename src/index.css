@@ -12,6 +12,55 @@
 
 @layer base {
   :root {
+    /* KDU NACOS CONNECT Light Theme - Green Accent (default) */
+    --background: 0 0% 100%;
+    --foreground: 220 20% 8%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 8%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 8%;
+
+    --primary: 142 76% 36%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 20% 8%;
+
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 8% 45%;
+
+    --accent: 142 76% 36%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 88%;
+    --input: 220 13% 88%;
+    --ring: 142 76% 36%;
+
+    --radius: 0.75rem;
+
+    /* Sidebar */
+    --sidebar-background: 220 14% 98%;
+    --sidebar-foreground: 220 20% 8%;
+    --sidebar-primary: 142 76% 36%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 94%;
+    --sidebar-accent-foreground: 220 20% 8%;
+    --sidebar-border: 220 13% 88%;
+    --sidebar-ring: 142 76% 36%;
+
+    /* Custom Properties */
+    --glow-primary: 0 0 40px hsl(142 76% 36% / 0.1);
+    --glow-primary-strong: 0 0 60px hsl(142 76% 36% / 0.18);
+    --gradient-primary: linear-gradient(135deg, hsl(142 76% 40%), hsl(142 76% 32%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(220 14% 97%));
+  }
+
+  .dark {
     /* KDU NACOS CONNECT Dark Theme - Green Accent */
     --background: 220 20% 4%;
     --foreground: 0 0% 98%;
@@ -41,9 +90,6 @@
     --input: 220 16% 18%;
     --ring: 142 76% 45%;
 
-    --radius: 0.75rem;
-
-    /* Sidebar */
     --sidebar-background: 220 18% 6%;
     --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 142 76% 45%;
@@ -53,33 +99,10 @@
     --sidebar-border: 220 16% 15%;
     --sidebar-ring: 142 76% 45%;
 
-    /* Custom Properties */
     --glow-primary: 0 0 40px hsl(142 76% 45% / 0.15);
     --glow-primary-strong: 0 0 60px hsl(142 76% 45% / 0.25);
     --gradient-primary: linear-gradient(135deg, hsl(142 76% 45%), hsl(142 76% 35%));
     --gradient-card: linear-gradient(135deg, hsl(220 18% 10%), hsl(220 18% 6%));
-  }
-
-  .dark {
-    --background: 220 20% 4%;
-    --foreground: 0 0% 98%;
-    --card: 220 18% 8%;
-    --card-foreground: 0 0% 98%;
-    --popover: 220 18% 8%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 142 76% 45%;
-    --primary-foreground: 220 20% 4%;
-    --secondary: 220 16% 12%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 220 16% 12%;
-    --muted-foreground: 220 10% 60%;
-    --accent: 142 76% 45%;
-    --accent-foreground: 220 20% 4%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 220 16% 18%;
-    --input: 220 16% 18%;
-    --ring: 142 76% 45%;
   }
 }
 
@@ -127,18 +150,19 @@
     color: hsl(var(--foreground)) !important;
   }
 
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus,
-  input:-webkit-autofill:active {
+  .dark input:-webkit-autofill,
+  .dark input:-webkit-autofill:hover,
+  .dark input:-webkit-autofill:focus,
+  .dark input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0px 1000px hsl(var(--background)) inset !important;
     -webkit-text-fill-color: hsl(var(--foreground)) !important;
     caret-color: hsl(var(--foreground));
   }
-  input[type="date"]::-webkit-calendar-picker-indicator,
-  input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-  filter: invert(1);
-}
+
+  .dark input[type="date"]::-webkit-calendar-picker-indicator,
+  .dark input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+  }
 }
 
 @layer utilities {

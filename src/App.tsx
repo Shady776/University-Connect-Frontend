@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "@/components/context/ThemeContext"
 import Index from "./pages/Index";
 import StudentDashboard from "./pages/StudentDashboard";
 import TeacherDashboard from "./pages/TeacherDashboard";
@@ -35,75 +36,77 @@ import AdminSettings from "./pages/AdminSettings";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+  <ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
 
-          <Route
-            path="/student/*"
-            element={
-              <ProtectedRoute allowedRoles={["student"]}>
-                <Routes>
-                  <Route path="/" element={<StudentDashboard />} />
-                  <Route path="/courses" element={<StudentCourses />} />
-                  <Route path="/assignments" element={<StudentAssignments />} />
+            <Route
+              path="/student/*"
+              element={
+                <ProtectedRoute allowedRoles={["student"]}>
+                  <Routes>
+                    <Route path="/" element={<StudentDashboard />} />
+                    <Route path="/courses" element={<StudentCourses />} />
+                    <Route path="/assignments" element={<StudentAssignments />} />
 
-                  <Route path="/profile" element={<StudentProfile />} />
-                  <Route path="/test" element={<StudentTest />} />
-                  <Route path="/enrollment" element={<StudentEnrollment />} />
-                  <Route path="/warnings" element={<StudentWarnings />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/teacher/*"
-            element={
-              <ProtectedRoute allowedRoles={["teacher"]}>
-                <Routes>
-                  <Route path="/" element={<TeacherDashboard />} />
-                  <Route path="/courses" element={<TeacherCourses />} />
-                  <Route path="/materials" element={<TeacherMaterials />} />
-                  <Route path="/enrollments" element={<TeacherEnrollments />} />
-                  <Route path="/grading" element={<TeacherGrading />} />
-                  <Route path="/assignments" element={<TeacherAssignments />} />
-                  <Route path="/tests" element={<TeacherTests />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/*"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <Routes>
-                  <Route path="/" element={<AdminDashboard />} />
-                  <Route path="/users" element={<AdminUsers />} />
-                  <Route path="/courses" element={<AdminCourses />} />
-                  <Route path="/analytics" element={<AdminAnalytics />} />
-                  <Route path="/warnings" element={<AdminWarning />} />
-                  <Route path="/tests" element={<AdminTests />} />
-                  <Route path="/settings" element={<AdminSettings />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </ProtectedRoute>
-            }
-          />
+                    <Route path="/profile" element={<StudentProfile />} />
+                    <Route path="/test" element={<StudentTest />} />
+                    <Route path="/enrollment" element={<StudentEnrollment />} />
+                    <Route path="/warnings" element={<StudentWarnings />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/teacher/*"
+              element={
+                <ProtectedRoute allowedRoles={["teacher"]}>
+                  <Routes>
+                    <Route path="/" element={<TeacherDashboard />} />
+                    <Route path="/courses" element={<TeacherCourses />} />
+                    <Route path="/materials" element={<TeacherMaterials />} />
+                    <Route path="/enrollments" element={<TeacherEnrollments />} />
+                    <Route path="/grading" element={<TeacherGrading />} />
+                    <Route path="/assignments" element={<TeacherAssignments />} />
+                    <Route path="/tests" element={<TeacherTests />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/*"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <Routes>
+                    <Route path="/" element={<AdminDashboard />} />
+                    <Route path="/users" element={<AdminUsers />} />
+                    <Route path="/courses" element={<AdminCourses />} />
+                    <Route path="/analytics" element={<AdminAnalytics />} />
+                    <Route path="/warnings" element={<AdminWarning />} />
+                    <Route path="/tests" element={<AdminTests />} />
+                    <Route path="/settings" element={<AdminSettings />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </ProtectedRoute>
+              }
+            />
 
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ThemeProvider>
 );
 
 export default App;
