@@ -128,7 +128,7 @@ export function DashboardLayout({ children, role, userName = "User" }: Dashboard
                 <GraduationCap className="w-6 h-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="font-display font-bold text-lg text-sidebar-foreground">KDU NACOS CONNECT</h1>
+                <h1 className="font-display font-bold text-lg text-sidebar-foreground">NACOS CONNECT '26</h1>
                 <p className="text-xs text-muted-foreground">{roleLabels[role]}</p>
               </div>
             </Link>
