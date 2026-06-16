@@ -27,7 +27,8 @@ import TeacherTests from "./pages/TeacherTests";
 import AdminUsers from "./pages/AdminUsers";
 import AdminCourses from "./pages/AdminCourses";
 import AdminAnalytics from "./pages/AdminAnalytics";
-import AdminAnnouncements from "./pages/AdminAnnouncements";
+import AdminWarning from "./pages/AdminWarnings";
+import AdminTests from "./pages/AdminTests";
 import AdminSettings from "./pages/AdminSettings";
 
 
@@ -88,7 +89,8 @@ const App = () => (
                   <Route path="/users" element={<AdminUsers />} />
                   <Route path="/courses" element={<AdminCourses />} />
                   <Route path="/analytics" element={<AdminAnalytics />} />
-                  <Route path="/announcements" element={<AdminAnnouncements />} />
+                  <Route path="/warnings" element={<AdminWarning />} />
+                  <Route path="/tests" element={<AdminTests />} />
                   <Route path="/settings" element={<AdminSettings />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>

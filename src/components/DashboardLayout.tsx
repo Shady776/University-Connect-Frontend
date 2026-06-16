@@ -8,6 +8,7 @@ import {
   MessageSquare,
   User,
   Upload,
+  AlertTriangle,
   Users,
   BarChart3,
   Bell,
@@ -59,9 +60,10 @@ const adminNav: NavItem[] = [
   { icon: Home,     label: "Dashboard",    href: "/admin" },
   { icon: Users,    label: "Users",        href: "/admin/users" },
   { icon: BookOpen, label: "Courses",      href: "/admin/courses" },
-  { icon: BarChart3,label: "Analytics",    href: "/admin/analytics" },
-  { icon: Bell,     label: "Announcements",href: "/admin/announcements" },
-  { icon: Settings, label: "Settings",     href: "/admin/settings" },
+  // { icon: BarChart3, label: "Analytics",    href: "/admin/analytics" },
+  { icon: AlertTriangle, label: "Warnings",href: "/admin/warnings" },
+  { icon: FileText, label: "Tests",href: "/admin/tests" }, 
+  // { icon: Settings, label: "Settings",     href: "/admin/settings" },
 ];
 
 const navByRole   = { student: studentNav, teacher: teacherNav, admin: adminNav };
